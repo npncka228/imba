@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка кода</title>
+    <script>
+        function checkCode() {
+            // Извлечение параметра 'код' из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeToCheck = urlParams.get('code');
+
+            if (!codeToCheck) {
+                document.body.innerText = 'Параметр "код" не найден в URL';
+                return;
+            }
+
+            // Встроенный массив кодов
+            const validCodes = [
+                "1234",
+                "5678",
+                "abcd"
+            ];
+
+            // Проверка наличия кода в массиве
+            const isCodeFound = validCodes.includes(codeToCheck);
+            document.body.innerText = isCodeFound ? 'true' : 'false';
+        }
+
+        // Вызов функции при загрузке страницы
+        window.onload = checkCode;
+    </script>
+</head>
+<body>
+</body>
+</html>
