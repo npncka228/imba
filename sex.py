@@ -43,7 +43,7 @@ class ChatGPT(loader.Module):
         self.user_histories = self.db.get("ChatGPTModule", "user_histories", {})
 
     @loader.command(ru_doc="Настроить системное сообщение для ChatGPT.")
-    async def settings(self, message):
+    async def gptsettings(self, message):
         """Set a custom system message for ChatGPT."""
         system_message = utils.get_args_raw(message)
         if not system_message:
@@ -83,15 +83,15 @@ class ChatGPT(loader.Module):
         if not question:
             await utils.answer(message, self.strings("pls_query"))
             return
-
+        
         await self.respond_to_message(message, question)
         await message.delete()
 
     async def respond_to_message(self, message, question):
         user_id = str(message.sender_id)
-        chat_id = str(message.chat_id)
         system_message = self.config["SYSTEM_MESSAGE"]
 
+        # Формирование истории с системным сообщением
         history = [{"role": "system", "content": system_message}, {"role": "user", "content": question}]
         generating_message = await utils.answer(message, self.strings("generating"))
 
@@ -100,7 +100,7 @@ class ChatGPT(loader.Module):
                 async with session.post("http://api.onlysq.ru/ai/v1", json=history) as response:
                     response.raise_for_status()
                     response_json = await response.json()
-                    answer = response_json.get("answer", "Error: No response.")
+                    answer = response_json.get("answer", "No response.")
                     await generating_message.delete()
                     await message.reply(self.strings("response_label").format(response=answer))
         except Exception as e:
